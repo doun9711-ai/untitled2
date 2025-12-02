@@ -8,14 +8,22 @@ public class Calc {
 
         boolean needToPlus = exp.contains("+");
         boolean needToMultiply = exp.contains("*");
+        boolean needToCompond = needToPlus && needToMultiply;
 
         String[] bits = null;
 
         if (needToPlus) {
             bits = exp.split(" \\+ ");
-        } else if (needToMultiply) {
+        }
+        if (needToMultiply) {
             bits = exp.split(" \\* ");
         }
+        if (needToCompond) {
+            bits =exp.split(" \\+ ");
+
+            return Integer.parseInt(bits[0]) + run(bits[1]);
+        }
+
 
         int sum = 0;
         for (int i = 0; i < bits.length; i++) {

@@ -5,12 +5,21 @@ import java.util.stream.Collectors;
 
 public class Calc {
 
+    public static boolean debug = true;
+    public static int runCallCount = 0;
+
     public static int run(String exp) {
+        runCallCount++;
 
         exp = exp.trim();
+        exp = exp.replace("-","-1 * ");
 
         // 괄호 제거
         exp = stripOuterBrackets(exp);
+
+        if (debug) {
+            System.out.printf("exp (%d) : %s\n", runCallCount, exp);
+        }
 
         // 그냥 숫자만 들어올 경우 바로 리턴
         if (!exp.contains(" ")) {
@@ -23,6 +32,7 @@ public class Calc {
         boolean needToCompound = needToPlus && needToMulti;
 
         exp = exp.replace("- ", "+ -");
+
 
         if (needToSplit) {
             int splitPointIndex = findSplitPointIndex(exp);

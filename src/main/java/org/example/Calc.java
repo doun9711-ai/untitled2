@@ -7,6 +7,8 @@ public class Calc {
 
     public static int run(String exp) {
 
+        exp = exp.trim();
+
         // 괄호 제거
         exp = stripOuterBrackets(exp);
 
@@ -23,26 +25,14 @@ public class Calc {
         exp = exp.replace("- ", "+ -");
 
         if (needToSplit) {
-            int bracketsCount = 0;
-            int splitPointIndex = -1;
+            int splitPointIndex = findSplitPointIndex(exp);
 
-            for (int i = 0; i < exp.length(); i++) {
-                if (exp.charAt(i) == '(') {
-                    bracketsCount++;
-                } else if (exp.charAt(i) == ')') {
-                    bracketsCount--;
-                }
-                if (bracketsCount == 0) {
-                    splitPointIndex = i;
-                    break;
-                }
-            }
-            String firstExp = exp.substring(0, splitPointIndex + 1);
-            String secondExp = exp.substring(splitPointIndex + 4);
+            String firstExp = exp.substring(0, splitPointIndex);
+            String secondExp = exp.substring(splitPointIndex + 1);
 
-            char operator = exp.charAt(splitPointIndex + 2);
+            char operator = exp.charAt(splitPointIndex);
 
-            exp = Calc.run(firstExp) + " " + operator + " " + secondExp;
+            exp = Calc.run(firstExp) + " " + operator + " " + Calc.run(secondExp);
 
             return Calc.run(exp);
 
@@ -82,6 +72,32 @@ public class Calc {
         throw new RuntimeException("해석 불가 : 올바른 계산식이 아님");
     }
 
+    private static int findSplitPointIndex(String exp) {
+        int index = findSplitPointIndexBy(exp, '+');
+
+        if (index >= 0) return index;
+
+        return findSplitPointIndexBy(exp, '*');
+
+    }
+
+    private static int findSplitPointIndexBy(String exp, char findChar) {
+        int bracketsCount = 0;
+
+        for (int i = 0; i < exp.length(); i++) {
+            char c = exp.charAt(i);
+
+            if (c == '(') {
+                bracketsCount++;
+            } else if (c == ')') {
+                bracketsCount--;
+            } else if (c == findChar) {
+                if (bracketsCount == 0) return i;
+            }
+        }
+        return -1;
+    }
+
     private static String stripOuterBrackets(String exp) {
 
         int outerBracketsCount = 0;
@@ -97,4 +113,3 @@ public class Calc {
 
 
 }
-
